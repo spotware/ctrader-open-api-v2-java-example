@@ -1,0 +1,36 @@
+option java_multiple_files = true;
+option java_generate_equals_and_hash = true;
+option java_package = "com.xtrader.protocol.proto.commons";
+option java_outer_classname = "ContainerCommonMessages";
+
+import "CommonModelMessages.proto";
+
+
+message ProtoMessage {
+    required uint32 payloadType = 1; // contains id of ProtoPayloadType or other custom PayloadTypes (e.g. ProtoCHPayloadType)
+    optional bytes payload = 2;      // serialized protobuf message that corresponds to payloadType
+    optional string clientMsgId = 3; // request message id, assigned by the client that will be returned in the response
+}
+
+message ProtoErrorRes {
+    optional ProtoPayloadType payloadType = 1 [default = ERROR_RES];
+    
+    required string errorCode = 2;   // contains name of ProtoErrorCode or other custom ErrorCodes (e.g. ProtoCHErrorCode)
+    optional string description = 3; // error description
+}
+
+message ProtoHeartbeatEvent {
+    optional ProtoPayloadType payloadType = 1 [default = HEARTBEAT_EVENT];
+}
+
+message ProtoPingReq {
+    optional ProtoPayloadType payloadType = 1 [default = PING_REQ];
+    
+    required uint64 timestamp = 2; // timestamp that will be returned in the response
+}
+
+message ProtoPingRes {
+    optional ProtoPayloadType payloadType = 1 [default = PING_RES];
+    
+    required uint64 timestamp = 2;
+}
