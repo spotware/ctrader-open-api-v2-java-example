@@ -25,8 +25,7 @@ public class ProtoOASymbolChangedEventExample {
         }
     }
 
-    private static void catchProtoOASymbolChangedEvent(NettyClient nettyClient, long ctidTraderAccountId) throws InterruptedException {
-
+    private static void catchProtoOASymbolChangedEvent(NettyClient nettyClient, long ctidTraderAccountId) {
         nettyClient.addListener(message -> {
             MessageLite messageLite = message.getMessage();
             if (!(message.getMessage() instanceof ProtoOASymbolChangedEvent)) {
@@ -41,6 +40,5 @@ public class ProtoOASymbolChangedEventExample {
                 System.out.println(event);
             }
         });
-
     }
 }

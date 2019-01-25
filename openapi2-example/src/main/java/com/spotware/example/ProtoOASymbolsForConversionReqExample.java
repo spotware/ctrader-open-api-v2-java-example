@@ -11,7 +11,6 @@ import com.xtrader.protocol.openapi.v2.ProtoOASymbolsForConversionRes;
 
 public class ProtoOASymbolsForConversionReqExample {
 
-
     public static void main(String[] args) throws InterruptedException {
         Config config = new Config();
         NettyClient nettyClient = new NettyClient(config.getHost(), config.getPort());
@@ -38,7 +37,7 @@ public class ProtoOASymbolsForConversionReqExample {
                 .build();
         ProtoMessageReceiver receiver = nettyClient.writeAndFlush(protoOASymbolByIdReq);
 
-        MessageLite messageLite = receiver.waitSingleResult(200l);
+        MessageLite messageLite = receiver.waitSingleResult(200L);
 
         if (messageLite instanceof ProtoOASymbolsForConversionRes) {
             ProtoOASymbolsForConversionRes response = (ProtoOASymbolsForConversionRes) messageLite;

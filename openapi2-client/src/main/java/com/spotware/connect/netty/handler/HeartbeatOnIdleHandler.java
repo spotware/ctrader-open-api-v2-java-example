@@ -14,7 +14,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 
 public class HeartbeatOnIdleHandler extends ChannelDuplexHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeartbeatOnIdleHandler.class);
-    private static final ChannelMessage<ProtoHeartbeatEvent> HEARTBEAT_MSG = new ChannelMessage(ProtoHeartbeatEvent.getDefaultInstance());
+    private static final ChannelMessage<ProtoHeartbeatEvent> HEARTBEAT_MSG = new ChannelMessage<>(ProtoHeartbeatEvent.getDefaultInstance());
     public static final HeartbeatOnIdleHandler DEFAULT = new HeartbeatOnIdleHandler();
 
     private HeartbeatOnIdleHandler() {

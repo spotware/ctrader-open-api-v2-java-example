@@ -32,7 +32,6 @@ public class AuthHelper {
                 .build();
     }
 
-
     private ProtoOAAccountAuthReq createAccountAuthorizationRequest(String accessToken, long ctidTraderAccountId) {
         return ProtoOAAccountAuthReq.newBuilder()
                 .setAccessToken(accessToken)

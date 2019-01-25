@@ -38,7 +38,7 @@ public class CloseOnExceptionHandler extends ChannelInboundHandlerAdapter {
         Channel channel = ctx.channel();
         if (cause instanceof CorruptedFrameException) {
             if (channel.isActive()) {
-                channel.writeAndFlush(new ChannelMessage(CORRUPTED_FRAME_ERROR_RES)).addListener(ChannelFutureListener.CLOSE);
+                channel.writeAndFlush(new ChannelMessage<>(CORRUPTED_FRAME_ERROR_RES)).addListener(ChannelFutureListener.CLOSE);
                 LOGGER.warn("Caught CorruptedFrameException({}). Sending error response and closing channel={}", cause.getMessage(), channel);
             } else {
                 LOGGER.warn("Caught CorruptedFrameException({}). Channel={} already closed", cause.getMessage(), channel);
@@ -46,7 +46,7 @@ public class CloseOnExceptionHandler extends ChannelInboundHandlerAdapter {
 
             LOGGER.trace("Cause:", cause);
         } else if (cause instanceof TooLongFrameException) {
-            channel.writeAndFlush(new ChannelMessage(FRAME_TOO_LONG_ERROR_RES)).addListener(ChannelFutureListener.CLOSE);
+            channel.writeAndFlush(new ChannelMessage<>(FRAME_TOO_LONG_ERROR_RES)).addListener(ChannelFutureListener.CLOSE);
             LOGGER.warn("Caught TooLongFrameException. Sending error response and closing channel={}", channel);
         } else if (cause instanceof NotSslRecordException) {
             LOGGER.warn("NotSslRecordException caught in channel {}. Cause: {}. Closing channel.", channel, cause.getMessage());
@@ -61,9 +61,9 @@ public class CloseOnExceptionHandler extends ChannelInboundHandlerAdapter {
                 LOGGER.warn("Exception caught in channel " + channel + ": attempt to write to closed channel " + channel.remoteAddress());
             } else if (cause.getClass() == IOException.class) {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(MessageFormat.format("Exception caught in channel {}. Closing channel.", new Object[]{channel}), cause);
+                    LOGGER.debug(MessageFormat.format("Exception caught in channel {}. Closing channel.", channel), cause);
                 } else {
-                    LOGGER.warn("Exception caught in channel {}: {} {}. Closing channel.", new Object[]{channel, cause.getClass(), cause.getMessage()});
+                    LOGGER.warn("Exception caught in channel {}: {} {}. Closing channel.", channel, cause.getClass(), cause.getMessage());
                 }
 
             } else if (cause instanceof WebSocketHandshakeException) {
@@ -74,7 +74,7 @@ public class CloseOnExceptionHandler extends ChannelInboundHandlerAdapter {
                 LOGGER.warn("The message can't be written to the channel {}: {}; The channel will be closed", channel, cause.getMessage());
                 channel.close();
             } else {
-                LOGGER.error(MessageFormat.format("Exception caught in channel {}. Closing channel.", new Object[]{channel}), cause);
+                LOGGER.error(MessageFormat.format("Exception caught in channel {}. Closing channel.", channel), cause);
                 channel.close();
             }
         }
