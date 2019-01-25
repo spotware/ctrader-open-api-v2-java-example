@@ -37,7 +37,7 @@ public class ProtoOASymbolByIdReqExample {
                 .build();
         ProtoMessageReceiver receiver = nettyClient.writeAndFlush(protoOASymbolByIdReq);
 
-        MessageLite messageLite = receiver.waitSingleResult(200l);
+        MessageLite messageLite = receiver.waitSingleResult(200L);
 
         if (messageLite instanceof ProtoOASymbolByIdRes) {
             ProtoOASymbolByIdRes response = (ProtoOASymbolByIdRes) messageLite;

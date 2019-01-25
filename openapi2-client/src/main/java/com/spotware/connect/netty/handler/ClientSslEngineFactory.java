@@ -1,7 +1,5 @@
 package com.spotware.connect.netty.handler;
 
-
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -37,7 +35,7 @@ public class ClientSslEngineFactory implements SslEngineFactory {
         nettySslContext = createSslContext(ciphers);
     }
 
-    private static final SslContext createSslContext(String ciphers) throws SSLException {
+    private static SslContext createSslContext(String ciphers) throws SSLException {
         SslContextBuilder sslContextBuilder = SslContextBuilder.forClient()
                 .trustManager(InsecureTrustManagerFactory.INSTANCE);
 
@@ -47,7 +45,7 @@ public class ClientSslEngineFactory implements SslEngineFactory {
         return sslContextBuilder.build();
     }
 
-    private static final void applyCipherSuitesFromString(SslContextBuilder sslContextBuilder, String cipherSuitesString) {
+    private static void applyCipherSuitesFromString(SslContextBuilder sslContextBuilder, String cipherSuitesString) {
         if (cipherSuitesString == null) {
             return;
         }
@@ -62,7 +60,7 @@ public class ClientSslEngineFactory implements SslEngineFactory {
         sslContextBuilder.ciphers(list);
     }
 
-    public void load() throws GeneralSecurityException, IOException {
+    public void load() throws GeneralSecurityException {
         sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, new TrustManager[]{new X509TrustManager() {
             @Override
@@ -81,9 +79,9 @@ public class ClientSslEngineFactory implements SslEngineFactory {
     }
 
     @Override
-    public SslHandler newHandler(Channel channel) throws SSLException {
+    public SslHandler newHandler(Channel channel) {
         SslHandler newHandler = nettySslContext.newHandler(channel.alloc());
-        LOGGER.trace("Ciphers={}", newHandler.engine().getEnabledCipherSuites());
+        LOGGER.trace("Ciphers={}", (Object[]) newHandler.engine().getEnabledCipherSuites());
         return newHandler;
     }
 

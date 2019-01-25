@@ -147,7 +147,7 @@ public class ChannelMessage<M extends MessageLite> {
     }
 
     public int hashCode() {
-        return Objects.hash(new Object[]{this.message, this.clientRequestId, this.sessionId, this.commandId});
+        return Objects.hash(this.message, this.clientRequestId, this.sessionId, this.commandId);
     }
 
     public boolean equals(Object obj) {

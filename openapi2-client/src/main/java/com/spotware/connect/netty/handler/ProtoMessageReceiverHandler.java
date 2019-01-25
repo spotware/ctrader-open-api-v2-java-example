@@ -23,8 +23,8 @@ public class ProtoMessageReceiverHandler extends ChannelInboundHandlerAdapter {
     public static final String NAME = "MESSAGE_RECEIVER";
     private static final long EXPIRATION_REQUEST_TIMEOUT = 5 * 60 * 1000L;// 5 min
 
-    private Map<String, LinkedBlockingQueue<MessageLite>> messagesByReqestIds = new ConcurrentHashMap<>();
-    private Map<String, Long> lastTimeUsingReqestId = new ConcurrentHashMap<>();
+    private Map<String, LinkedBlockingQueue<MessageLite>> messagesByRequestIds = new ConcurrentHashMap<>();
+    private Map<String, Long> lastTimeUsingRequestId = new ConcurrentHashMap<>();
 
     private final Set<MessageListener> messageListeners = new HashSet<>();
     private ReadWriteLock messageListenersLock = new ReentrantReadWriteLock();
@@ -57,7 +57,7 @@ public class ProtoMessageReceiverHandler extends ChannelInboundHandlerAdapter {
             String clientRequestId = channelMessage.getClientRequestId();
             if (clientRequestId != null && !clientRequestId.isEmpty()) {
                 getMessagesByRequestId(clientRequestId).add(channelMessage.getMessage());
-                lastTimeUsingReqestId.put(clientRequestId, System.currentTimeMillis());
+                lastTimeUsingRequestId.put(clientRequestId, System.currentTimeMillis());
             }
         }
         ctx.fireChannelRead(msg);
@@ -67,8 +67,8 @@ public class ProtoMessageReceiverHandler extends ChannelInboundHandlerAdapter {
         if (requestId == null || requestId.isEmpty()) {
             throw new IllegalArgumentException("clientRequestId can't be null or empty");
         }
-        messagesByReqestIds.putIfAbsent(requestId, new LinkedBlockingQueue<>(5));
-        return messagesByReqestIds.get(requestId);
+        messagesByRequestIds.putIfAbsent(requestId, new LinkedBlockingQueue<>(5));
+        return messagesByRequestIds.get(requestId);
     }
 
     public ProtoMessageReceiver getProtoMessageReceiver(String clientRequestId) {
@@ -94,11 +94,11 @@ public class ProtoMessageReceiverHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void cleanOldMessages() {
-        for (Map.Entry<String, Long> entry : lastTimeUsingReqestId.entrySet()) {
+        for (Map.Entry<String, Long> entry : lastTimeUsingRequestId.entrySet()) {
             String requestId = entry.getKey();
             if (EXPIRATION_REQUEST_TIMEOUT < System.currentTimeMillis() - entry.getValue()) {
-                lastTimeUsingReqestId.remove(requestId);
-                messagesByReqestIds.remove(requestId);
+                lastTimeUsingRequestId.remove(requestId);
+                messagesByRequestIds.remove(requestId);
             }
         }
     }
