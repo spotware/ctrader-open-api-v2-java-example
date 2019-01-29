@@ -3,13 +3,14 @@ option java_generate_equals_and_hash = true;
 option java_package = "com.xtrader.protocol.proto.commons.model";
 option java_outer_classname = "ContainerCommonModelMessages";
 
-
-// --- COMMON API 50 - 69 --- [1 - 49 reserved for traffic intensive messages]
+// --- INTENSIVE COMMANDS 1 - 49
+// --- COMMON API 50 - 69
 enum ProtoPayloadType {
+    // common intensive
+    PROTO_MESSAGE = 5;
+    // common commands
     ERROR_RES = 50;
     HEARTBEAT_EVENT = 51;
-    PING_REQ = 52;
-    PING_RES = 53;
 }
 
 // COMMON error codes 1 - 99
@@ -24,35 +25,5 @@ enum ProtoErrorCode {
     FRAME_TOO_LONG = 8;
     MARKET_CLOSED = 9;
     CONCURRENT_MODIFICATION = 10;
-}
-
-message ProtoIntRange {
-    optional int32 from = 1;
-    optional int32 to = 2;
-}
-
-message ProtoLongRange {
-    optional int64 from = 1;
-    optional int64 to = 2;
-}
-
-message ProtoDoubleRange {
-    optional double from = 1;
-    optional double to = 2;
-}
-
-enum ProtoTradeSide {
-    BUY = 1;
-    SELL = 2;
-}
-
-enum ProtoQuoteType {
-    BID = 1;
-    ASK = 2;
-}
-
-enum ProtoTimeInForce {
-    GOOD_TILL_DATE = 1;
-    GOOD_TILL_CANCEL = 2;
-    IMMEDIATE_OR_CANCEL = 3;
+    BLOCKED_PAYLOAD_TYPE = 11;
 }
