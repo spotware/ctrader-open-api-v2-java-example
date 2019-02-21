@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import com.xtrader.protocol.openapi.v2.ProtoOAAccountAuthReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAAccountAuthRes;
+import com.xtrader.protocol.openapi.v2.ProtoOAAccountDisconnectEvent;
 import com.xtrader.protocol.openapi.v2.ProtoOAAccountsTokenInvalidatedEvent;
 import com.xtrader.protocol.openapi.v2.ProtoOAAmendOrderReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAAmendPositionSLTPReq;
@@ -81,6 +82,8 @@ public class OA2ProtoMessageFactory extends ProtoMessageFactory {
                 ProtoOAGetTickDataRes.getDefaultInstance(), ProtoOAAccountsTokenInvalidatedEvent.getDefaultInstance(),
                 ProtoOAClientDisconnectEvent.getDefaultInstance(), ProtoOAGetAccountListByAccessTokenReq.getDefaultInstance(),
                 ProtoOAGetAccountListByAccessTokenRes.getDefaultInstance(), ProtoOAGetCtidProfileByTokenReq.getDefaultInstance(),
-                ProtoOAGetCtidProfileByTokenRes.getDefaultInstance()));
+                ProtoOAGetCtidProfileByTokenRes.getDefaultInstance(),
+                ProtoOAAccountDisconnectEvent.getDefaultInstance()
+        ));
     }
 }

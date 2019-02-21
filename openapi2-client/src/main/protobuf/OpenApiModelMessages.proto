@@ -67,6 +67,11 @@ enum ProtoOAPayloadType {
     PROTO_OA_SUBSCRIBE_DEPTH_QUOTES_RES = 2157;
     PROTO_OA_UNSUBSCRIBE_DEPTH_QUOTES_REQ = 2158;
     PROTO_OA_UNSUBSCRIBE_DEPTH_QUOTES_RES = 2159;
+    PROTO_OA_SYMBOL_CATEGORY_REQ = 2160;
+    PROTO_OA_SYMBOL_CATEGORY_RES = 2161;
+    PROTO_OA_ACCOUNT_LOGOUT_REQ = 2162;
+    PROTO_OA_ACCOUNT_LOGOUT_RES = 2163;
+    PROTO_OA_ACCOUNT_DISCONNECT_EVENT = 2164;
 }
 
 /** Asset entity. */
@@ -83,12 +88,12 @@ message ProtoOASymbol {
     required int32 pipPosition = 3; // Pip position on digits.
     optional bool enableShortSelling = 4; // If TRUE then the short selling with the symbol is enabled.
     optional bool guaranteedStopLoss = 5; // If TRUE then setting of guaranteedStopLoss is available for limited risk accounts.
-    optional ProtoOADayOfWeek swapRollover3Days = 6 [default = MONDAY]; // Day of the week when 3x rollover is charged.
+    optional ProtoOADayOfWeek swapRollover3Days = 6 [default = MONDAY]; // Day of the week when SWAP charge amount will be tripled. Doesn't impact Rollover Commission.
     optional double swapLong = 7; // SWAP charge for long positions.
     optional double swapShort = 8; // SWAP charge for short positions.
-    optional int64 maxVolume = 9; // Maximum allowed volume for an order with a symbol.
-    optional int64 minVolume = 10; // Minimum allowed volume for an order with a symbol.
-    optional int64 stepVolume = 11; // Multiplier of the volume for an order.
+    optional int64 maxVolume = 9; // Maximum allowed volume in cents for an order with a symbol.
+    optional int64 minVolume = 10; // Minimum allowed volume in cents for an order with a symbol.
+    optional int64 stepVolume = 11; // Step of the volume in cents for an order.
     optional uint64 maxExposure = 12; // Value of max exposure per symbol, per account. Blocks execution if breached.
     repeated ProtoOAInterval schedule = 13; // Symbol trading interval, specified in seconds starting from SUNDAY 00:00 in specified time zone.
     required int64 commission = 14; // Commission base amount. Total commission depends on commissionType.
@@ -105,6 +110,7 @@ message ProtoOASymbol {
     optional int32 skipRolloverDays = 25; // Initial period before the first rolloverCommission will be charged on the account.
     optional string scheduleTimeZone = 26; // Time zone for the symbol trading intervals.
     optional ProtoOATradingMode tradingMode = 27 [default = ENABLED]; // Rules for trading with the symbol. See ProtoOATradingMode for details.
+    optional ProtoOADayOfWeek rolloverCommission3Days = 28 [default = MONDAY]; //Day of the week (in UTC) when Administrative Fee charge amount will be tripled. Applied only if RolloverChargePeriod = 0 or 1
 }
 
 /** Lightweight symbol entity. */
@@ -114,6 +120,15 @@ message ProtoOALightSymbol {
     optional bool enabled = 3; // If TRUE then symbol is visible for traders.
     optional int64 baseAssetId = 4; // Base asset.
     optional int64 quoteAssetId = 5; // Quote asset.
+    optional int64 symbolCategoryId = 6;  // Id of the symbol category used for symbols grouping.
+    optional string description = 7;
+}
+
+/** Symbol category entity. */
+message ProtoOASymbolCategory {
+    required int64 id = 1; // The unique identifier of the symbol category.
+    required int64 assetClassId = 2; // Link to the asset class. One asset class can have many symbol categories.
+    required string name = 3; // Category name.
 }
 
 enum ProtoOADayOfWeek {
@@ -201,7 +216,7 @@ message ProtoOATrader {
     optional int64 traderLogin = 14; // ID of the account that is unique per server (Broker).
     optional ProtoOAAccountType accountType = 15 [default = HEDGED]; // Account type: HEDGED, NETTED, etc.
     optional string brokerName = 16; // Some whitelabel assigned to trader by broker at the moment of account creation.
-    optional int64 registrationTimestamp =17; // Unix timestamp of the account registration. Should be used as minimal date in historical data requests.
+    optional int64 registrationTimestamp = 17; // Unix timestamp of the account registration. Should be used as minimal date in historical data requests.
 }
 
 /** Position status ENUM. */
@@ -383,6 +398,7 @@ enum ProtoOAChangeBalanceType {
     BALANCE_DEPOSIT_MANAGEMENT_FEE = 27; // Mirroring commission.
     BALANCE_WITHDRAW_MANAGEMENT_FEE = 28; // Mirroring commission.
     BALANCE_DEPOSIT_PERFORMANCE_FEE = 29; // Mirroring commission.
+    BALANCE_WITHDRAW_INACTIVITY_FEE = 35;  // Withdraw of inactivity fee from the balance CS-10762
 }
 
 /** Execution entity. */
@@ -447,7 +463,7 @@ enum ProtoOATrendbarPeriod {
 
 /** Historical Trendbar entity. */
 message ProtoOATrendbar {
-    required int64 volume = 3; // Bar volume in cents.
+    required int64 volume = 3; // Bar volume in ticks.
     optional ProtoOATrendbarPeriod period = 4 [default = M1]; // Bar period.
     optional int64 low = 5; // Low price of the bar.
     optional uint64 deltaOpen = 6; // Delta between open and low price. open = low + deltaOpen.
@@ -458,7 +474,7 @@ message ProtoOATrendbar {
 
 /** Expected margin computation entity. */
 message ProtoOAExpectedMargin {
-    required int64 volume = 1; // Volume used for computation.
+    required int64 volume = 1; // Volume in cents used for computation of expected margin.
     required int64 buyMargin = 2; // Buy margin amount in cents.
     required int64 sellMargin = 3; // Sell margin amount in cents.
 }
@@ -490,6 +506,7 @@ message ProtoOACtidProfile {
 message ProtoOACtidTraderAccount {
     required uint64 ctidTraderAccountId = 1; // Unique identifier of the trader's account. Used to match responses to trader's accounts.cTrader platform. Different brokers might have different ids
     optional bool isLive = 2; // If TRUE then the account is belong to Live environment and live host must be used to authorize it
+    optional int64 traderLogin = 3;
 }
 
 /** Asset class entity. */
@@ -509,6 +526,7 @@ message ProtoOADepthQuote {
 /** Error code ENUM. */
 enum ProtoOAErrorCode {
     OA_AUTH_TOKEN_EXPIRED = 1; // When token used for account authorization is expired.
+    ACCOUNT_NOT_AUTHORIZED = 2; // When account is not authorized.
     INCORRECT_BOUNDARIES = 35; // Used for time and numeric boundaries.
     CONNECTIONS_LIMIT_EXCEEDED = 67; // When Open API client connections number is reached its maximum.
 }

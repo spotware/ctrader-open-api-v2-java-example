@@ -550,3 +550,40 @@ message ProtoOAUnsubscribeDepthQuotesRes {
 
     required int64 ctidTraderAccountId = 2; // Unique identifier of the trader's account. Used to match responses to trader's accounts.
 }
+
+/** Request for a list of symbol categories available for a trading account. */
+message ProtoOASymbolCategoryListReq {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_SYMBOL_CATEGORY_REQ];
+
+    required int64 ctidTraderAccountId = 2; // Unique identifier of the trader's account. Used to match responses to trader's accounts.
+}
+
+/** Response to the ProtoSymbolCategoryListReq request. */
+message ProtoOASymbolCategoryListRes {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_SYMBOL_CATEGORY_RES];
+
+    required int64 ctidTraderAccountId = 2; // Unique identifier of the trader's account. Used to match responses to trader's accounts.
+    repeated ProtoOASymbolCategory symbolCategory = 3; // The list of symbol categories.
+}
+
+/** Request for logout of  trading account session.*/
+message ProtoOAAccountLogoutReq {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_ACCOUNT_LOGOUT_REQ];
+
+    required int64 ctidTraderAccountId = 2;  // The unique identifier of the trader's account in cTrader platform.
+}
+
+/** Response to the ProtoOATraderLogoutReq request. */
+message ProtoOAAccountLogoutRes {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_ACCOUNT_LOGOUT_RES];
+
+    required int64 ctidTraderAccountId = 2;  // The unique identifier of the trader's account in cTrader platform.
+}
+
+/** Event that is sent when the established session for an account is dropped on the server side.
+ A new session must be authorized for the account.  */
+message ProtoOAAccountDisconnectEvent {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_ACCOUNT_DISCONNECT_EVENT];
+
+    required int64 ctidTraderAccountId = 2;  // The unique identifier of the trader's account in cTrader platform.
+}

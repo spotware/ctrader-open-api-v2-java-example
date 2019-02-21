@@ -19,10 +19,8 @@ public class ProtoOASubscribeSpotsReqExample {
 
         try {
             AuthHelper authHelper = nettyClient.getAuthHelper();
-            authHelper.authorizeApplication(config.getClientId(), config.getClientSecret());
-
-            long ctidTraderAccountId = config.getCtid();
-            authHelper.authorizeAccount(ctidTraderAccountId, config.getAccessToken());
+            Long ctidTraderAccountId = config.getCtid();
+            authHelper.authorizeOnlyOneTrader(config.getClientId(), config.getClientSecret(), ctidTraderAccountId, config.getAccessToken());
 
             subscribeSymbol(nettyClient, ctidTraderAccountId);
         } finally {

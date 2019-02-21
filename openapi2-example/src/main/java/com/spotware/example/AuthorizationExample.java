@@ -4,6 +4,7 @@ import com.google.protobuf.MessageLite;
 import com.spotware.connect.Config;
 import com.spotware.connect.netty.AuthHelper;
 import com.spotware.connect.netty.NettyClient;
+import com.spotware.connect.netty.exception.AuthorizationException;
 import com.xtrader.protocol.openapi.v2.ProtoOAAccountAuthRes;
 import com.xtrader.protocol.openapi.v2.ProtoOAApplicationAuthRes;
 
@@ -28,6 +29,7 @@ public class AuthorizationExample {
             } else {
                 System.out.println("Something went wrong");
                 System.out.println("Response: " + applicationAuthRes);
+                throw new AuthorizationException("application can't be authorize");
             }
 
             System.out.println();
