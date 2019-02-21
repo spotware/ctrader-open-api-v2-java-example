@@ -5,6 +5,8 @@ import java.util.Arrays;
 import com.xtrader.protocol.openapi.v2.ProtoOAAccountAuthReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAAccountAuthRes;
 import com.xtrader.protocol.openapi.v2.ProtoOAAccountDisconnectEvent;
+import com.xtrader.protocol.openapi.v2.ProtoOAAccountLogoutReq;
+import com.xtrader.protocol.openapi.v2.ProtoOAAccountLogoutRes;
 import com.xtrader.protocol.openapi.v2.ProtoOAAccountsTokenInvalidatedEvent;
 import com.xtrader.protocol.openapi.v2.ProtoOAAmendOrderReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAAmendPositionSLTPReq;
@@ -42,6 +44,8 @@ import com.xtrader.protocol.openapi.v2.ProtoOASubscribeSpotsReq;
 import com.xtrader.protocol.openapi.v2.ProtoOASubscribeSpotsRes;
 import com.xtrader.protocol.openapi.v2.ProtoOASymbolByIdReq;
 import com.xtrader.protocol.openapi.v2.ProtoOASymbolByIdRes;
+import com.xtrader.protocol.openapi.v2.ProtoOASymbolCategoryListReq;
+import com.xtrader.protocol.openapi.v2.ProtoOASymbolCategoryListRes;
 import com.xtrader.protocol.openapi.v2.ProtoOASymbolChangedEvent;
 import com.xtrader.protocol.openapi.v2.ProtoOASymbolsForConversionReq;
 import com.xtrader.protocol.openapi.v2.ProtoOASymbolsForConversionRes;
@@ -83,7 +87,13 @@ public class OA2ProtoMessageFactory extends ProtoMessageFactory {
                 ProtoOAClientDisconnectEvent.getDefaultInstance(), ProtoOAGetAccountListByAccessTokenReq.getDefaultInstance(),
                 ProtoOAGetAccountListByAccessTokenRes.getDefaultInstance(), ProtoOAGetCtidProfileByTokenReq.getDefaultInstance(),
                 ProtoOAGetCtidProfileByTokenRes.getDefaultInstance(),
+                ProtoOASymbolCategoryListReq.getDefaultInstance(),
+                ProtoOASymbolCategoryListRes.getDefaultInstance(),
+                ProtoOAAccountLogoutReq.getDefaultInstance(),
+                ProtoOAAccountLogoutRes.getDefaultInstance(),
                 ProtoOAAccountDisconnectEvent.getDefaultInstance()
         ));
     }
 }
+
+
