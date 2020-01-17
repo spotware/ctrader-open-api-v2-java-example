@@ -33,13 +33,22 @@ import com.xtrader.protocol.openapi.v2.ProtoOAGetTickDataReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAGetTickDataRes;
 import com.xtrader.protocol.openapi.v2.ProtoOAGetTrendbarsReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAGetTrendbarsRes;
+import com.xtrader.protocol.openapi.v2.ProtoOAMarginCallListReq;
+import com.xtrader.protocol.openapi.v2.ProtoOAMarginCallListRes;
+import com.xtrader.protocol.openapi.v2.ProtoOAMarginCallTriggerEvent;
+import com.xtrader.protocol.openapi.v2.ProtoOAMarginCallUpdateEvent;
+import com.xtrader.protocol.openapi.v2.ProtoOAMarginCallUpdateReq;
+import com.xtrader.protocol.openapi.v2.ProtoOAMarginCallUpdateRes;
 import com.xtrader.protocol.openapi.v2.ProtoOAMarginChangedEvent;
 import com.xtrader.protocol.openapi.v2.ProtoOANewOrderReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAOrderErrorEvent;
 import com.xtrader.protocol.openapi.v2.ProtoOAReconcileReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAReconcileRes;
+import com.xtrader.protocol.openapi.v2.ProtoOARefreshTokenReq;
+import com.xtrader.protocol.openapi.v2.ProtoOARefreshTokenRes;
 import com.xtrader.protocol.openapi.v2.ProtoOASpotEvent;
 import com.xtrader.protocol.openapi.v2.ProtoOASubscribeLiveTrendbarReq;
+import com.xtrader.protocol.openapi.v2.ProtoOASubscribeLiveTrendbarRes;
 import com.xtrader.protocol.openapi.v2.ProtoOASubscribeSpotsReq;
 import com.xtrader.protocol.openapi.v2.ProtoOASubscribeSpotsRes;
 import com.xtrader.protocol.openapi.v2.ProtoOASymbolByIdReq;
@@ -56,6 +65,7 @@ import com.xtrader.protocol.openapi.v2.ProtoOATraderRes;
 import com.xtrader.protocol.openapi.v2.ProtoOATraderUpdatedEvent;
 import com.xtrader.protocol.openapi.v2.ProtoOATrailingSLChangedEvent;
 import com.xtrader.protocol.openapi.v2.ProtoOAUnsubscribeLiveTrendbarReq;
+import com.xtrader.protocol.openapi.v2.ProtoOAUnsubscribeLiveTrendbarRes;
 import com.xtrader.protocol.openapi.v2.ProtoOAUnsubscribeSpotsReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAUnsubscribeSpotsRes;
 import com.xtrader.protocol.openapi.v2.ProtoOAVersionReq;
@@ -91,8 +101,18 @@ public class OA2ProtoMessageFactory extends ProtoMessageFactory {
                 ProtoOASymbolCategoryListRes.getDefaultInstance(),
                 ProtoOAAccountLogoutReq.getDefaultInstance(),
                 ProtoOAAccountLogoutRes.getDefaultInstance(),
-                ProtoOAAccountDisconnectEvent.getDefaultInstance()
-        ));
+                ProtoOAAccountDisconnectEvent.getDefaultInstance(),
+                ProtoOASubscribeLiveTrendbarRes.getDefaultInstance(),
+                ProtoOARefreshTokenReq.getDefaultInstance(),
+                ProtoOARefreshTokenRes.getDefaultInstance(),
+                ProtoOAUnsubscribeLiveTrendbarRes.getDefaultInstance(),
+                ProtoOAMarginCallListReq.getDefaultInstance(),
+                ProtoOAMarginCallListRes.getDefaultInstance(),
+                ProtoOAMarginCallUpdateReq.getDefaultInstance(),
+                ProtoOAMarginCallUpdateRes.getDefaultInstance(),
+                ProtoOAMarginCallUpdateEvent.getDefaultInstance(),
+                ProtoOAMarginCallTriggerEvent.getDefaultInstance()
+                ));
     }
 }
 

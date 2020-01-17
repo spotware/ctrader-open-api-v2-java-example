@@ -49,6 +49,7 @@ public class ProtoOASubscribeSpotsReqExample {
             System.out.println(errorRes);
         }
 
+        Thread.sleep(15000);
 
         unsubscribeSymbol(nettyClient, ctidTraderAccountId);
     }

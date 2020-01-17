@@ -72,6 +72,16 @@ enum ProtoOAPayloadType {
     PROTO_OA_ACCOUNT_LOGOUT_REQ = 2162;
     PROTO_OA_ACCOUNT_LOGOUT_RES = 2163;
     PROTO_OA_ACCOUNT_DISCONNECT_EVENT = 2164;
+    PROTO_OA_SUBSCRIBE_LIVE_TRENDBAR_RES = 2165;
+    PROTO_OA_UNSUBSCRIBE_LIVE_TRENDBAR_RES = 2166;
+    PROTO_OA_MARGIN_CALL_LIST_REQ = 2167;
+    PROTO_OA_MARGIN_CALL_LIST_RES = 2168;
+    PROTO_OA_MARGIN_CALL_UPDATE_REQ = 2169;
+    PROTO_OA_MARGIN_CALL_UPDATE_RES = 2170;
+    PROTO_OA_MARGIN_CALL_UPDATE_EVENT = 2171;
+    PROTO_OA_MARGIN_CALL_TRIGGER_EVENT = 2172;
+    PROTO_OA_REFRESH_TOKEN_REQ = 2173;
+    PROTO_OA_REFRESH_TOKEN_RES = 2174;
 }
 
 /** Asset entity. */
@@ -111,6 +121,8 @@ message ProtoOASymbol {
     optional string scheduleTimeZone = 26; // Time zone for the symbol trading intervals.
     optional ProtoOATradingMode tradingMode = 27 [default = ENABLED]; // Rules for trading with the symbol. See ProtoOATradingMode for details.
     optional ProtoOADayOfWeek rolloverCommission3Days = 28 [default = MONDAY]; //Day of the week (in UTC) when Administrative Fee charge amount will be tripled. Applied only if RolloverChargePeriod = 0 or 1
+    optional ProtoOASwapCalculationType swapCalculationType = 29 [default = POINTS]; //Specifies type of SWAP computation as points (0) or interest (1, annual, in percent)
+    optional int64 lotSize = 30; //Lot size of the Symbol (in cents)
 }
 
 /** Lightweight symbol entity. */
@@ -120,7 +132,7 @@ message ProtoOALightSymbol {
     optional bool enabled = 3; // If TRUE then symbol is visible for traders.
     optional int64 baseAssetId = 4; // Base asset.
     optional int64 quoteAssetId = 5; // Quote asset.
-    optional int64 symbolCategoryId = 6;  // Id of the symbol category used for symbols grouping.
+    optional int64 symbolCategoryId = 6; // Id of the symbol category used for symbols grouping.
     optional string description = 7;
 }
 
@@ -176,6 +188,12 @@ enum ProtoOATradingMode {
     CLOSE_ONLY_MODE = 3;
 }
 
+/** Enum for specifying SWAP calculation type for symbol. */
+enum ProtoOASwapCalculationType {
+    POINTS = 0; //Specifies type of SWAP computation as points (0)
+    INTEREST = 1; //Specifies type of SWAP computation as interest (1, annual, in percent)
+}
+
 /** Enum for specifying access right for a trader. */
 enum ProtoOAAccessRights {
     FULL_ACCESS = 0; // Enable all trading.
@@ -208,15 +226,17 @@ message ProtoOATrader {
     optional int64 nonWithdrawableBonus = 6; // Broker's bonus that cannot be withdrew from the account as cash.
     optional ProtoOAAccessRights accessRights = 7 [default = FULL_ACCESS]; // Access rights that an owner has to the account in cTrader platform. See ProtoOAAccessRights for details.
     required int64 depositAssetId = 8; // Deposit currency of the account.
-    optional bool swapFree = 9; // If TRUE than account is Shariah compliant.
+    optional bool swapFree = 9; // If TRUE then account is Shariah compliant.
     optional uint32 leverageInCents = 10; // Account leverage (e.g. If leverage = 1:50 then value = 5000).
     optional ProtoOATotalMarginCalculationType totalMarginCalculationType = 11; // Margin computation type for the account (MAX, SUM, NET).
     optional uint32 maxLeverage = 12; // Maximum allowed leverage for the account. Used as validation when a Trader can change leverage value.
-    optional bool frenchRisk = 13; // If TRUE then account is AMF compliant.
+    optional bool frenchRisk = 13 [deprecated = true]; // If TRUE then account is AMF compliant.
     optional int64 traderLogin = 14; // ID of the account that is unique per server (Broker).
     optional ProtoOAAccountType accountType = 15 [default = HEDGED]; // Account type: HEDGED, NETTED, etc.
     optional string brokerName = 16; // Some whitelabel assigned to trader by broker at the moment of account creation.
     optional int64 registrationTimestamp = 17; // Unix timestamp of the account registration. Should be used as minimal date in historical data requests.
+    optional bool isLimitedRisk = 18; // If TRUE then account is compliant to use specific margin calculation strategy.
+    optional ProtoOALimitedRiskMarginCalculationStrategy limitedRiskMarginCalculationStrategy = 19 [default = ACCORDING_TO_LEVERAGE]; // Special strategy used in margin calculations for this account (if account isLimitedRisk).
 }
 
 /** Position status ENUM. */
@@ -317,8 +337,8 @@ message ProtoOAOrder {
     optional string clientOrderId = 17; // Optional ClientOrderId. Max Length = 50 chars.
     optional ProtoOATimeInForce timeInForce = 18 [default = IMMEDIATE_OR_CANCEL]; // Order's time in force. Depends on order type.
     optional int64 positionId = 19; // ID of the position linked to the order (e.g. closing order, order that increase volume of a specific position, etc.).
-    optional int64 relativeStopLoss = 20; // Relative stopLoss that can be specified instead of absolute as one. Specified in 1/100'000 of unit of a price. For BUY stopLoss = entryPrice - relativeStopLoss, for SELL stopLoss = entryPrice + relativeStopLoss.
-    optional int64 relativeTakeProfit = 21; // Relative takeProfit that can be specified instead of absolute one. Specified in 1/100'000 of unit of a price. ForBUY takeProfit = entryPrice + relativeTakeProfit, for SELL takeProfit = entryPrice - relativeTakeProfit.
+    optional int64 relativeStopLoss = 20; // Relative stopLoss that can be specified instead of absolute as one. Specified in 1/100_000 of unit of a price. For BUY stopLoss = entryPrice - relativeStopLoss, for SELL stopLoss = entryPrice + relativeStopLoss.
+    optional int64 relativeTakeProfit = 21; // Relative takeProfit that can be specified instead of absolute one. Specified in 1/100_000 of unit of a price. ForBUY takeProfit = entryPrice + relativeTakeProfit, for SELL takeProfit = entryPrice - relativeTakeProfit.
     optional bool isStopOut = 22; // If TRUE then order was stopped out from server side.
     optional bool trailingStopLoss = 23; // If TRUE then order is trailingStopLoss. Valid for STOP_LOSS_TAKE_PROFIT order.
     optional ProtoOAOrderTriggerMethod stopTriggerMethod = 24 [default = TRADE]; // Trigger method for the order. Valid only for STOP and STOP_LIMIT orders.
@@ -398,7 +418,7 @@ enum ProtoOAChangeBalanceType {
     BALANCE_DEPOSIT_MANAGEMENT_FEE = 27; // Mirroring commission.
     BALANCE_WITHDRAW_MANAGEMENT_FEE = 28; // Mirroring commission.
     BALANCE_DEPOSIT_PERFORMANCE_FEE = 29; // Mirroring commission.
-    BALANCE_WITHDRAW_INACTIVITY_FEE = 35;  // Withdraw of inactivity fee from the balance CS-10762
+    BALANCE_WITHDRAW_INACTIVITY_FEE = 35; // Withdraw of inactivity fee from the balance CS-10762
 }
 
 /** Execution entity. */
@@ -467,8 +487,8 @@ message ProtoOATrendbar {
     optional ProtoOATrendbarPeriod period = 4 [default = M1]; // Bar period.
     optional int64 low = 5; // Low price of the bar.
     optional uint64 deltaOpen = 6; // Delta between open and low price. open = low + deltaOpen.
-    optional uint64 deltaClose = 7; // Delta between open and low price. close = low + deltaClose.
-    optional uint64 deltaHigh = 8; // Delta between open and low price. high = low + deltaHigh.
+    optional uint64 deltaClose = 7; // Delta between close and low price. close = low + deltaClose.
+    optional uint64 deltaHigh = 8; // Delta between high and low price. high = low + deltaHigh.
     optional uint32 utcTimestampInMinutes = 9; // Timestamp of the bar. Equal to the timestamp of the open tick.
 }
 
@@ -506,7 +526,7 @@ message ProtoOACtidProfile {
 message ProtoOACtidTraderAccount {
     required uint64 ctidTraderAccountId = 1; // Unique identifier of the trader's account. Used to match responses to trader's accounts.cTrader platform. Different brokers might have different ids
     optional bool isLive = 2; // If TRUE then the account is belong to Live environment and live host must be used to authorize it
-    optional int64 traderLogin = 3;
+    optional int64 traderLogin = 3; // TraderLogin for a specific account. Value is displayed on Client App UI
 }
 
 /** Asset class entity. */
@@ -523,10 +543,71 @@ message ProtoOADepthQuote {
     optional uint64 ask = 5; // Ask price for ask quotes.
 }
 
+/** Margin call entity, specifies threshold for exact margin call type. Only 3 instances of margin calls are supported, identified by marginCallType. See ProtoOANotificationType for details. */
+message ProtoOAMarginCall {
+    required ProtoOANotificationType marginCallType = 1;
+    required double marginLevelThreshold = 2;
+    optional int64 utcLastUpdateTimestamp = 3;
+}
+
+/** Type of notification, currently only 3 instances of marginCall are supported. */
+enum ProtoOANotificationType {
+    MARGIN_LEVEL_THRESHOLD_1 = 61; // one of three margin calls, they are all similar.
+    MARGIN_LEVEL_THRESHOLD_2 = 62; // one of three margin calls, they are all similar.
+    MARGIN_LEVEL_THRESHOLD_3 = 63; // one of three margin calls, they are all similar.
+}
+
 /** Error code ENUM. */
 enum ProtoOAErrorCode {
+    //Authorization
     OA_AUTH_TOKEN_EXPIRED = 1; // When token used for account authorization is expired.
     ACCOUNT_NOT_AUTHORIZED = 2; // When account is not authorized.
-    INCORRECT_BOUNDARIES = 35; // Used for time and numeric boundaries.
-    CONNECTIONS_LIMIT_EXCEEDED = 67; // When Open API client connections number is reached its maximum.
+    ALREADY_LOGGED_IN = 14; // When client tries to authorize after it was already authorized
+    CH_CLIENT_AUTH_FAILURE = 101; // Open API client is not activated or wrong client credentials.
+    CH_CLIENT_NOT_AUTHENTICATED = 102; // When a command is sent for not authorized Open API client.
+    CH_CLIENT_ALREADY_AUTHENTICATED = 103; // Client is trying to authenticate twice.
+    CH_ACCESS_TOKEN_INVALID = 104; // Access token is invalid.
+    CH_SERVER_NOT_REACHABLE = 105; // Trading service is not available.
+    CH_CTID_TRADER_ACCOUNT_NOT_FOUND = 106; // Trading account is not found.
+    CH_OA_CLIENT_NOT_FOUND = 107; // Could not find this client id.
+
+    //General
+    REQUEST_FREQUENCY_EXCEEDED = 108; // Request frequency is reached.
+    SERVER_IS_UNDER_MAINTENANCE = 109; // Server is under maintenance.
+    CHANNEL_IS_BLOCKED = 110; // Operations are not allowed for this account.
+    CONNECTIONS_LIMIT_EXCEEDED = 67; // Limit of connections is reached for this Open API client.
+
+    //Pricing
+    NOT_SUBSCRIBED_TO_SPOTS = 112; // When trying to subscribe to depth, trendbars, etc. without spot subscription.
+    ALREADY_SUBSCRIBED = 113; // When subscription is requested for an active.
+    SYMBOL_NOT_FOUND = 114; // Symbol not found.
+    UNKNOWN_SYMBOL = 115; // Note: to be merged with SYMBOL_NOT_FOUND.
+    INCORRECT_BOUNDARIES = 35; // When requested period (from,to) is too large or invalid values are set to from/to.
+
+    //Trading
+    NO_QUOTES = 117; // Trading cannot be done as not quotes are available. Applicable for Book B.
+    NOT_ENOUGH_MONEY = 118; // Not enough funds to allocate margin.
+    MAX_EXPOSURE_REACHED = 119; // Max exposure limit is reached for a {trader, symbol, side}.
+    POSITION_NOT_FOUND = 120; // Position not found.
+    ORDER_NOT_FOUND = 121; // Order not found.
+    POSITION_NOT_OPEN = 122; // When trying to close a position that it is not open.
+    POSITION_LOCKED = 123; // Position in the state that does not allow to perform an operation.
+    TOO_MANY_POSITIONS = 124; // Trading account reached its limit for max number of open positions and orders.
+    TRADING_BAD_VOLUME = 125; // Invalid volume.
+    TRADING_BAD_STOPS = 126; // Invalid stop price.
+    TRADING_BAD_PRICES = 127; // Invalid price (e.g. negative).
+    TRADING_BAD_STAKE = 128; // Invalid stake volume (e.g. negative).
+    PROTECTION_IS_TOO_CLOSE_TO_MARKET = 129; // Invalid protection prices.
+    TRADING_BAD_EXPIRATION_DATE = 130; // Invalid expiration.
+    PENDING_EXECUTION = 131; // Unable to apply changes as position has an order under execution.
+    TRADING_DISABLED = 132; // Trading is blocked for the symbol.
+    TRADING_NOT_ALLOWED = 133; // Trading account is in read only mode.
+    UNABLE_TO_CANCEL_ORDER = 134; // Unable to cancel order.
+    UNABLE_TO_AMEND_ORDER = 135; // Unable to amend order.
+    SHORT_SELLING_NOT_ALLOWED = 136; // Short selling is not allowed.
+}
+
+enum ProtoOALimitedRiskMarginCalculationStrategy {
+    ACCORDING_TO_LEVERAGE = 0;
+    ACCORDING_TO_GSL = 1;
 }

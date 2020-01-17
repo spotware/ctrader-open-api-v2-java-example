@@ -43,9 +43,10 @@ message ProtoOAErrorRes {
     optional int64 ctidTraderAccountId = 2; //The unique identifier of the trader's account in cTrader platform.
     required string errorCode = 3; // The name of the ProtoErrorCode or the other custom ErrorCodes (e.g. ProtoCHErrorCode).
     optional string description = 4; // The error description.
+    optional int64 maintenanceEndTimestamp = 5; // The timestamp in seconds when the current maintenance session will be ended.
 }
 
-/** The event that is sent when the connection with the client application is cancelled by the server. All the sessions for the traders' accounts will be terminated. */
+/** Event that is sent when the connection with the client application is cancelled by the server. All the sessions for the traders' accounts will be terminated. */
 message ProtoOAClientDisconnectEvent {
     optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_CLIENT_DISCONNECT_EVENT];
 
@@ -100,7 +101,7 @@ message ProtoOANewOrderReq {
     optional ProtoOAOrderTriggerMethod stopTriggerMethod = 23 [default = TRADE]; // Trigger method for the STOP or the STOP_LIMIT pending order.
 }
 
-/** The event that is sent following the successful order acceptance or execution by the server. Acts as response to the ProtoOANewOrderReq, ProtoOACancelOrderReq, ProtoOAAmendOrderReq, ProtoOAAmendPositionSLTPReq, ProtoOAClosePositionReq requests. Also, the event is sent when a Deposit/Withdrawal took place. */
+/** Event that is sent following the successful order acceptance or execution by the server. Acts as response to the ProtoOANewOrderReq, ProtoOACancelOrderReq, ProtoOAAmendOrderReq, ProtoOAAmendPositionSLTPReq, ProtoOAClosePositionReq requests. Also, the event is sent when a Deposit/Withdrawal took place. */
 message ProtoOAExecutionEvent {
     optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_EXECUTION_EVENT];
 
@@ -390,6 +391,23 @@ message ProtoOAGetAccountListByAccessTokenRes {
     repeated ProtoOACtidTraderAccount ctidTraderAccount = 4; // The list of the accounts.
 }
 
+/** Request to refresh the access token using refresh token of granted trader's account. */
+message ProtoOARefreshTokenReq {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_REFRESH_TOKEN_REQ];
+
+    required string refreshToken = 2; // The Refresh Token issued for updating Access Token.
+}
+
+/** Response to the ProtoOARefreshTokenReq request. */
+message ProtoOARefreshTokenRes {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_REFRESH_TOKEN_RES];
+
+    required string accessToken = 2; // The Access Token issued for providing access to the Trader's Account.
+    required string tokenType = 3; // bearer
+    required int64 expiresIn = 4; // Access Token expiration in seconds
+    required string refreshToken = 5;
+}
+
 //+------------------------------------------------------------------+
 //|                              Quotes                              |
 //+------------------------------------------------------------------+
@@ -429,9 +447,10 @@ message ProtoOASpotEvent {
 
     required int64 ctidTraderAccountId = 2; // Unique identifier of the trader's account. Used to match responses to trader's accounts.
     required int64 symbolId = 3; // Unique identifier of the Symbol in cTrader platform.
-    optional uint64 bid = 4; // Bid price.
-    optional uint64 ask = 5; // Ask price.
+    optional uint64 bid = 4; // Bid price. Specified in 1/100_000 of unit of a price. (e.g. 1.23 -> 123_000)
+    optional uint64 ask = 5; // Ask price. Specified in 1/100_000 of unit of a price.
     repeated ProtoOATrendbar trendbar = 6; // Returns live trend bar. Requires subscription on the trend bars.
+    optional uint64 sessionClose = 7;//Last session close. Specified in 1/100_000 of unit of a price.
 }
 
 /** Request for subscribing for live trend bars. Requires subscription on the spot events, see ProtoOASubscribeSpotsReq. */
@@ -442,6 +461,14 @@ message ProtoOASubscribeLiveTrendbarReq {
     required ProtoOATrendbarPeriod period = 3; // Specifies period of trend bar series (e.g. M1, M10, etc.).
     required int64 symbolId = 4; // Unique identifier of the Symbol in cTrader platform.
 }
+
+/** Response to the ProtoOASubscribeLiveTrendbarReq request. */
+message ProtoOASubscribeLiveTrendbarRes {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_SUBSCRIBE_LIVE_TRENDBAR_RES];
+
+    required int64 ctidTraderAccountId = 2; // Unique identifier of the trader's account. Used to match responses to trader's accounts.
+}
+
 /** Request for unsubscribing from the live trend bars. */
 message ProtoOAUnsubscribeLiveTrendbarReq {
     optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_UNSUBSCRIBE_LIVE_TRENDBAR_REQ];
@@ -449,6 +476,13 @@ message ProtoOAUnsubscribeLiveTrendbarReq {
     required int64 ctidTraderAccountId = 2; // Unique identifier of the trader's account. Used to match responses to trader's accounts.
     required ProtoOATrendbarPeriod period = 3; // Specifies period of trend bar series (e.g. M1, M10, etc.).
     required int64 symbolId = 4; // Unique identifier of the Symbol in cTrader platform.
+}
+
+/** Response to the ProtoOASubscribeLiveTrendbarReq request. */
+message ProtoOAUnsubscribeLiveTrendbarRes {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_UNSUBSCRIBE_LIVE_TRENDBAR_RES];
+
+    required int64 ctidTraderAccountId = 2; // Unique identifier of the trader's account. Used to match responses to trader's accounts.
 }
 
 /** Request for getting historical trend bars for the symbol. */
@@ -570,14 +604,14 @@ message ProtoOASymbolCategoryListRes {
 message ProtoOAAccountLogoutReq {
     optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_ACCOUNT_LOGOUT_REQ];
 
-    required int64 ctidTraderAccountId = 2;  // The unique identifier of the trader's account in cTrader platform.
+    required int64 ctidTraderAccountId = 2; // The unique identifier of the trader's account in cTrader platform.
 }
 
 /** Response to the ProtoOATraderLogoutReq request. */
 message ProtoOAAccountLogoutRes {
     optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_ACCOUNT_LOGOUT_RES];
 
-    required int64 ctidTraderAccountId = 2;  // The unique identifier of the trader's account in cTrader platform.
+    required int64 ctidTraderAccountId = 2; // The unique identifier of the trader's account in cTrader platform.
 }
 
 /** Event that is sent when the established session for an account is dropped on the server side.
@@ -585,5 +619,48 @@ message ProtoOAAccountLogoutRes {
 message ProtoOAAccountDisconnectEvent {
     optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_ACCOUNT_DISCONNECT_EVENT];
 
-    required int64 ctidTraderAccountId = 2;  // The unique identifier of the trader's account in cTrader platform.
+    required int64 ctidTraderAccountId = 2; // The unique identifier of the trader's account in cTrader platform.
+}
+
+/** Request for a list of existing margin call thresholds configured for a user. */
+message ProtoOAMarginCallListReq {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_MARGIN_CALL_LIST_REQ];
+
+    required int64 ctidTraderAccountId = 2;
+}
+
+/** Response with a list of existing user Margin Calls, usually contains 3 items. */
+message ProtoOAMarginCallListRes {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_MARGIN_CALL_LIST_RES];
+
+    repeated ProtoOAMarginCall marginCall = 2;
+}
+
+/** Request to modify marginLevelThreshold of specified marginCallType for ctidTraderAccountId. */
+message ProtoOAMarginCallUpdateReq {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_MARGIN_CALL_UPDATE_REQ];
+
+    required int64 ctidTraderAccountId = 2;
+    required ProtoOAMarginCall marginCall = 3;
+}
+
+/** If this response received, it means that margin call was successfully updated. */
+message ProtoOAMarginCallUpdateRes {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_MARGIN_CALL_UPDATE_RES];
+}
+
+/** Event that is sent when a Margin Call threshold configuration is updated. */
+message ProtoOAMarginCallUpdateEvent {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_MARGIN_CALL_UPDATE_EVENT];
+
+    required int64 ctidTraderAccountId = 2;
+    required ProtoOAMarginCall marginCall = 3;
+}
+
+/** Event that is sent when account margin level reaches target marginLevelThreshold. Event is sent no more than once every 10 minutes to avoid spamming. */
+message ProtoOAMarginCallTriggerEvent {
+    optional ProtoOAPayloadType payloadType = 1 [default = PROTO_OA_MARGIN_CALL_TRIGGER_EVENT];
+
+    required int64 ctidTraderAccountId = 2;
+    required ProtoOAMarginCall marginCall = 3;
 }
