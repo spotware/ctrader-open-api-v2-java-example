@@ -48,7 +48,6 @@ Default demo host is `demo.ctraderapi.com`
 
 ## Note
 - For more information, you may contact us: connect@spotware.com.
-- The OpenAPI 1.0 documentation can be found [here](https://connect.spotware.com/docs/api-reference)
 
 ## Terms of Use
 You can find the terms of use of Spotware Open API 2.0 [here](https://connect.spotware.com/docs/terms-of-use).
