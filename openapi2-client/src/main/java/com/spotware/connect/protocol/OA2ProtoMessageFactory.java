@@ -12,6 +12,8 @@ import com.xtrader.protocol.openapi.v2.ProtoOAAmendOrderReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAAmendPositionSLTPReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAApplicationAuthReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAApplicationAuthRes;
+import com.xtrader.protocol.openapi.v2.ProtoOAAssetClassListReq;
+import com.xtrader.protocol.openapi.v2.ProtoOAAssetClassListRes;
 import com.xtrader.protocol.openapi.v2.ProtoOAAssetListReq;
 import com.xtrader.protocol.openapi.v2.ProtoOAAssetListRes;
 import com.xtrader.protocol.openapi.v2.ProtoOACancelOrderReq;
@@ -75,43 +77,61 @@ import com.xtrader.protocol.proto.commons.ProtoHeartbeatEvent;
 public class OA2ProtoMessageFactory extends ProtoMessageFactory {
 
     public OA2ProtoMessageFactory() {
-        super(Arrays.asList(ProtoHeartbeatEvent.getDefaultInstance(),
-                ProtoOAApplicationAuthReq.getDefaultInstance(), ProtoOAApplicationAuthRes.getDefaultInstance(), ProtoOAAccountAuthReq.getDefaultInstance(),
-                ProtoOAAccountAuthRes.getDefaultInstance(), ProtoOAVersionReq.getDefaultInstance(), ProtoOAVersionRes.getDefaultInstance(),
+        super(Arrays.asList(
+                // General
+                ProtoHeartbeatEvent.getDefaultInstance(),
+                ProtoOAErrorRes.getDefaultInstance(),
+
+                // Auth
+                ProtoOAApplicationAuthReq.getDefaultInstance(), ProtoOAApplicationAuthRes.getDefaultInstance(),
+                ProtoOAAccountAuthReq.getDefaultInstance(), ProtoOAAccountAuthRes.getDefaultInstance(),
+                ProtoOAVersionReq.getDefaultInstance(), ProtoOAVersionRes.getDefaultInstance(),
+                ProtoOAGetAccountListByAccessTokenReq.getDefaultInstance(), ProtoOAGetAccountListByAccessTokenRes.getDefaultInstance(),
+                ProtoOAGetCtidProfileByTokenReq.getDefaultInstance(), ProtoOAGetCtidProfileByTokenRes.getDefaultInstance(),
+                ProtoOAAccountLogoutReq.getDefaultInstance(), ProtoOAAccountLogoutRes.getDefaultInstance(),
+                ProtoOARefreshTokenReq.getDefaultInstance(), ProtoOARefreshTokenRes.getDefaultInstance(),
+
+                ProtoOAAccountsTokenInvalidatedEvent.getDefaultInstance(),
+                ProtoOAClientDisconnectEvent.getDefaultInstance(),
+                ProtoOAAccountDisconnectEvent.getDefaultInstance(),
+
+                // Orders
                 ProtoOANewOrderReq.getDefaultInstance(), ProtoOATrailingSLChangedEvent.getDefaultInstance(), ProtoOACancelOrderReq.getDefaultInstance(),
                 ProtoOAAmendOrderReq.getDefaultInstance(), ProtoOAAmendPositionSLTPReq.getDefaultInstance(), ProtoOAClosePositionReq.getDefaultInstance(),
-                ProtoOAAssetListReq.getDefaultInstance(), ProtoOAAssetListRes.getDefaultInstance(), ProtoOASymbolsListReq.getDefaultInstance(),
-                ProtoOASymbolsListRes.getDefaultInstance(), ProtoOASymbolByIdReq.getDefaultInstance(), ProtoOASymbolByIdRes.getDefaultInstance(),
+                ProtoOAExecutionEvent.getDefaultInstance(), ProtoOAOrderErrorEvent.getDefaultInstance(),
+
+                // Domain objects - lists of symbols, assets etc.
+                ProtoOAReconcileReq.getDefaultInstance(), ProtoOAReconcileRes.getDefaultInstance(),
+                ProtoOAAssetListReq.getDefaultInstance(), ProtoOAAssetListRes.getDefaultInstance(),
+                ProtoOAAssetClassListReq.getDefaultInstance(), ProtoOAAssetClassListRes.getDefaultInstance(),
+                ProtoOASymbolCategoryListReq.getDefaultInstance(), ProtoOASymbolCategoryListRes.getDefaultInstance(),
+                ProtoOASymbolsListReq.getDefaultInstance(), ProtoOASymbolsListRes.getDefaultInstance(),
+                ProtoOASymbolByIdReq.getDefaultInstance(), ProtoOASymbolByIdRes.getDefaultInstance(),
                 ProtoOASymbolsForConversionReq.getDefaultInstance(), ProtoOASymbolsForConversionRes.getDefaultInstance(),
-                ProtoOASymbolChangedEvent.getDefaultInstance(), ProtoOATraderReq.getDefaultInstance(), ProtoOATraderRes.getDefaultInstance(),
-                ProtoOATraderUpdatedEvent.getDefaultInstance(), ProtoOAReconcileReq.getDefaultInstance(), ProtoOAReconcileRes.getDefaultInstance(),
-                ProtoOAExecutionEvent.getDefaultInstance(), ProtoOASubscribeSpotsReq.getDefaultInstance(), ProtoOASubscribeSpotsRes.getDefaultInstance(),
-                ProtoOAUnsubscribeSpotsReq.getDefaultInstance(), ProtoOAUnsubscribeSpotsRes.getDefaultInstance(), ProtoOASpotEvent.getDefaultInstance(),
-                ProtoOAOrderErrorEvent.getDefaultInstance(), ProtoOADealListReq.getDefaultInstance(), ProtoOADealListRes.getDefaultInstance(),
-                ProtoOASubscribeLiveTrendbarReq.getDefaultInstance(), ProtoOAUnsubscribeLiveTrendbarReq.getDefaultInstance(),
-                ProtoOAGetTrendbarsReq.getDefaultInstance(), ProtoOAGetTrendbarsRes.getDefaultInstance(), ProtoOAExpectedMarginReq.getDefaultInstance(),
-                ProtoOAExpectedMarginRes.getDefaultInstance(), ProtoOAMarginChangedEvent.getDefaultInstance(), ProtoOAErrorRes.getDefaultInstance(),
+                ProtoOADealListReq.getDefaultInstance(), ProtoOADealListRes.getDefaultInstance(),
+                ProtoOATraderReq.getDefaultInstance(), ProtoOATraderRes.getDefaultInstance(),
+
+                ProtoOASymbolChangedEvent.getDefaultInstance(),
+                ProtoOATraderUpdatedEvent.getDefaultInstance(),
+
+                // Spots, depth, trendbars subscription
+                ProtoOASubscribeSpotsReq.getDefaultInstance(), ProtoOASubscribeSpotsRes.getDefaultInstance(),
+                ProtoOAUnsubscribeSpotsReq.getDefaultInstance(), ProtoOAUnsubscribeSpotsRes.getDefaultInstance(),
+                ProtoOASubscribeLiveTrendbarReq.getDefaultInstance(), ProtoOASubscribeLiveTrendbarRes.getDefaultInstance(),
+                ProtoOAUnsubscribeLiveTrendbarReq.getDefaultInstance(), ProtoOAUnsubscribeLiveTrendbarRes.getDefaultInstance(),
+                ProtoOAGetTrendbarsReq.getDefaultInstance(), ProtoOAGetTrendbarsRes.getDefaultInstance(),
+                ProtoOAGetTickDataReq.getDefaultInstance(), ProtoOAGetTickDataRes.getDefaultInstance(),
+
+                ProtoOASpotEvent.getDefaultInstance(),
+
+                // Margin, balance etc.
                 ProtoOACashFlowHistoryListReq.getDefaultInstance(), ProtoOACashFlowHistoryListRes.getDefaultInstance(),
-                ProtoOAGetTickDataReq.getDefaultInstance(),
-                ProtoOAGetTickDataRes.getDefaultInstance(), ProtoOAAccountsTokenInvalidatedEvent.getDefaultInstance(),
-                ProtoOAClientDisconnectEvent.getDefaultInstance(), ProtoOAGetAccountListByAccessTokenReq.getDefaultInstance(),
-                ProtoOAGetAccountListByAccessTokenRes.getDefaultInstance(), ProtoOAGetCtidProfileByTokenReq.getDefaultInstance(),
-                ProtoOAGetCtidProfileByTokenRes.getDefaultInstance(),
-                ProtoOASymbolCategoryListReq.getDefaultInstance(),
-                ProtoOASymbolCategoryListRes.getDefaultInstance(),
-                ProtoOAAccountLogoutReq.getDefaultInstance(),
-                ProtoOAAccountLogoutRes.getDefaultInstance(),
-                ProtoOAAccountDisconnectEvent.getDefaultInstance(),
-                ProtoOASubscribeLiveTrendbarRes.getDefaultInstance(),
-                ProtoOARefreshTokenReq.getDefaultInstance(),
-                ProtoOARefreshTokenRes.getDefaultInstance(),
-                ProtoOAUnsubscribeLiveTrendbarRes.getDefaultInstance(),
-                ProtoOAMarginCallListReq.getDefaultInstance(),
-                ProtoOAMarginCallListRes.getDefaultInstance(),
-                ProtoOAMarginCallUpdateReq.getDefaultInstance(),
-                ProtoOAMarginCallUpdateRes.getDefaultInstance(),
-                ProtoOAMarginCallUpdateEvent.getDefaultInstance(),
-                ProtoOAMarginCallTriggerEvent.getDefaultInstance()
+                ProtoOAExpectedMarginReq.getDefaultInstance(), ProtoOAExpectedMarginRes.getDefaultInstance(),
+                ProtoOAMarginCallListReq.getDefaultInstance(), ProtoOAMarginCallListRes.getDefaultInstance(),
+                ProtoOAMarginCallUpdateReq.getDefaultInstance(), ProtoOAMarginCallUpdateRes.getDefaultInstance(),
+                ProtoOAMarginCallUpdateEvent.getDefaultInstance(), ProtoOAMarginCallTriggerEvent.getDefaultInstance(),
+
+                ProtoOAMarginChangedEvent.getDefaultInstance()
                 ));
     }
 }
