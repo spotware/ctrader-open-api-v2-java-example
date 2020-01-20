@@ -27,19 +27,18 @@ public class ProtoMessageToChannelMessageDecoder extends SimpleChannelInboundHan
 
     public ProtoMessageToChannelMessageDecoder(ProtoMessageFactory protoMessageFactory) {
         assert protoMessageFactory != null : "undefined protoMessageFactory";
-
         this.protoMessageFactory = protoMessageFactory;
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ProtoMessage protoMessage) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, ProtoMessage protoMessage) {
         Channel channel = ctx.channel();
         LOGGER.trace("Decoding ProtoMessage message in channel={}", channel);
 
         int payloadType = protoMessage.getPayloadType();
         MessageLite protoObjectPrototype = protoMessageFactory.getMessageByPayloadType(payloadType);
         if (protoObjectPrototype == null) {
-            throw new IncorrectMessageException("protoObjectPrototype is null");
+            throw new IncorrectMessageException("protoObjectPrototype is null for payloadType=" + payloadType);
         }
 
         ByteString protoObjectBytes = protoMessage.getPayload();
