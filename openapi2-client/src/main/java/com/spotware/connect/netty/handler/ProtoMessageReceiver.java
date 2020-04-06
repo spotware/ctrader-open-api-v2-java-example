@@ -9,7 +9,7 @@ import com.google.protobuf.MessageLite;
 
 public class ProtoMessageReceiver {
 
-    private static final int TIMEOUT_WAITING_MSG = 1000;
+    private static final int TIMEOUT_WAITING_MSG = 2000;
     private BlockingQueue<MessageLite> queue;
 
     ProtoMessageReceiver(BlockingQueue<MessageLite> queue) {
