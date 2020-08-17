@@ -67,7 +67,7 @@
             <plugin>
                 <groupId>com.github.os72</groupId>
                 <artifactId>protoc-jar-maven-plugin</artifactId>
-                <version>2.5.0.4</version> <!-- for protobuf 2.5.0 -->
+                <version>3.11.4</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -75,6 +75,7 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
+                            <protocVersion>${protobuf-java.version}</protocVersion>
                             <includeDirectories>
                                 <include>src/main/protobuf</include>
                             </includeDirectories>
