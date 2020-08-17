@@ -106,7 +106,7 @@ public class NettyClient {
         pipeline.addLast("lengthFieldPrepender", lengthFieldPrepender);
         pipeline.addLast("protobufEncoder", protobufEncoder);
         pipeline.addLast("protoChannelMessageEncoder", protoChannelMessageEncoder);
-        pipeline.addLast("heartbeatOnIdle", HeartbeatOnIdleHandler.DEFAULT);
+        pipeline.addLast("heartbeatOnIdle", new HeartbeatOnIdleHandler());
         pipeline.addLast(ProtoMessageReceiverHandler.NAME, protoMessageReceiverHandler);
         pipeline.addLast("closeOnException", CloseOnExceptionHandler.DEFAULT);
     }
