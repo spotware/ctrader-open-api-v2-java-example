@@ -14,7 +14,7 @@
     <url>https://connect.spotware.com</url>
 
     <properties>
-        <protobuf-java.version>2.5.0</protobuf-java.version>
+        <protobuf-java.version>3.16.1</protobuf-java.version>
         <commons-lang3.version>3.3.2</commons-lang3.version>
         <netty-all.version>4.1.42.Final</netty-all.version>
         <slf4j.version>1.7.25</slf4j.version>
