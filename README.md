@@ -4,19 +4,19 @@
 The Open API 2.0 is the new version of the publicly available protobuf-based API developed by Spotware. It allows third-party service providers to integrate additional tools and applications for trading and analysis with the data and functionality from cTrader platform by getting all the required cTID data, market data and performing all possible trading operations on behalf of other cTrader users.
 
 ## Documentation
-Full documentation can be found on [Spotware Connect website](https://connect.spotware.com/docs/open_api_2)
+Full documentation can be found on [Spotware Open API website](https://help.ctrader.com/open-api/) 
 
 ## How to start
 1. Download this project.
 1. Import the project to the chosen IDE as a Maven project.
 1. Run command `mvn install` to download libraries and compile Protocol Buffer classes.
-1. Register your application as described [here](https://connect.spotware.com/docs/open_api_2/getting_started_v2). Set `CLIENT_PUBLIC_ID` and `CLIENT_SECRET` in [application.properties](./openapi2-example/src/main/resources/application.properties). 
+1. Register your application as described [here](https://help.ctrader.com/open-api/creating-new-app/). Set `CLIENT_PUBLIC_ID` and `CLIENT_SECRET` in [application.properties](./openapi2-example/src/main/resources/application.properties). 
 1. Login to [Demo cTrader](https://ct.spotware.com/) to create an account.
-1. Generate a token as described [here](https://connect.spotware.com/docs/open_api_2/getting_started_v2/open_authentication_v2). Set `ACCESS_TOKEN` and `CTID_TRADER_ACCOUNT_ID` in [application.properties](./openapi2-example/src/main/resources/application.properties).
+1. Generate a token as described [here](https://help.ctrader.com/open-api/account-authentication/). Set `ACCESS_TOKEN` and `CTID_TRADER_ACCOUNT_ID` in [application.properties](./openapi2-example/src/main/resources/application.properties).
 1. Run examples from `openapi2-example` submodule.
 
 ## Basic used libraries
-1. Google Protocol Buffers (Protobuf). [Documentation reference](https://connect.spotware.com/docs/open_api_2/introduction_to_protocol_buffers_v2). [Official site](https://developers.google.com/protocol-buffers/).
+1. Google Protocol Buffers (Protobuf). [Documentation reference](https://help.ctrader.com/open-api/protocol-buffers-json/). [Official site](https://developers.google.com/protocol-buffers/).
 2. Netty. [Official User Guide](https://netty.io/wiki/user-guide-for-4.x.html). [Official site](https://netty.io/).
 
 ## Content of the project
@@ -38,7 +38,7 @@ Several examples to send often used requests:
 - get symbol conversion chain
 
 File [application.properties](./openapi2-example/src/main/resources/application.properties) contains properties to be set:
-- `host` It can be found on [Spotware Proxy Cloud page](https://connect.spotware.com/docs/open_api_2/proxy_cloud_v2).
+- `host` It can be found on [Proxies/Endpoints page](https://help.ctrader.com/open-api/proxies-endpoints/).
 Default demo host is `demo.ctraderapi.com`
 - `port` Default port is `5035`
 - `CLIENT_PUBLIC_ID` (54 chars) Client ID from Credentials of your application
@@ -50,4 +50,4 @@ Default demo host is `demo.ctraderapi.com`
 - For more information, you may contact us: connect@spotware.com.
 
 ## Terms of Use
-You can find the terms of use of Spotware Open API 2.0 [here](https://connect.spotware.com/docs/terms-of-use).
+You can find the terms of use of Spotware Open API 2.0 [here](https://help.ctrader.com/open-api/terms-of-use/).
